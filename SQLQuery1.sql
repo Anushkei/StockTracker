@@ -1,0 +1,1 @@
+﻿INSERT INTO dbo.[Account] ([Type], [CashBalance]) VALUES ('Roth IRA', 105.6)

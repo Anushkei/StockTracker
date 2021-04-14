@@ -1,0 +1,183 @@
+﻿<Window x:Class="StockTracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StockTracker"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".25*" x:Name="Left"/>
+            <ColumnDefinition Width=".4*" x:Name="Middle"/>
+            <ColumnDefinition Width=".35*" x:Name="Right"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Section to hold the left-hand side of the window. -->
+        <Border Grid.Column="0" BorderBrush="DarkGray" BorderThickness="1" Margin="2,2,2,2" CornerRadius="4">
+            <Grid Margin="2,2,2,2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".5*" x:Name="TopLeft" />
+                    <RowDefinition Height=".5*" x:Name="BottomLeft" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
+                    <Label Content="Accounts" FontWeight="Bold" FontSize="14"/>
+
+                    <ContentControl Height="390">
+                        <DataGrid x:Name="AccountsList" SelectionChanged="AccountsList_SelectionChanged"
+                            MouseDoubleClick="AccountsList_MouseDoubleClick"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False"
+                            CanUserAddRows="False" CanUserDeleteRows="False" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding AccountId}" Header="Account #"/>
+                                <DataGridTextColumn Binding="{Binding Type}" Header="Type"/>
+                                <DataGridTextColumn Binding="{Binding CashBalanceString, Mode=OneWay}" Header="Cash Balance"/>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button x:Name="btnSetBuyer" Width="120" Content="Set as buyer" Background="WhiteSmoke" Click="btnSetBuyer_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ContentControl>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" VerticalAlignment="Stretch">
+                    <Label Content="Assets" FontWeight="Bold" FontSize="14"/>
+
+                    <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Label Content="Total (including cash): "/>
+                        <Label x:Name="lblAccountValue" FontWeight="Bold"/>
+                    </DockPanel>
+                    
+                    <ContentControl Height="390">
+                        <DataGrid x:Name="AssetsList" ScrollViewer.CanContentScroll="True"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" 
+                            CanUserAddRows="False" CanUserDeleteRows="False" 
+                            CanUserReorderColumns="False" CanUserSortColumns="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding StockSymbol, Mode=OneWay}" Header="Symbol"/>
+                                <DataGridTextColumn Binding="{Binding Quantity, Mode=OneWay}" Header="Quantity"/>
+                                <DataGridTextColumn Binding="{Binding StockPriceString, Mode=OneWay}" Header="Price"/>
+                                <DataGridTextColumn Binding="{Binding CurrentValueString, Mode=OneWay}" Header="Value"/>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button x:Name="btnSell" Width="80" Content="Sell" Background="WhiteSmoke" Click="btnSell_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ContentControl>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Section to hold the middle area of the window. -->
+        <Border Grid.Column="1" BorderBrush="DarkGray" BorderThickness="1" Margin="2,2,2,2" CornerRadius="4">
+            <StackPanel>
+                <Label Content="Corporations" FontWeight="Bold" FontSize="14"/>
+
+                <ContentControl Height="1000">
+                    <DataGrid x:Name="CorporationsList" Margin="2,2,2,2" ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" CanUserAddRows="False" 
+                      CanUserDeleteRows="False" MouseDoubleClick="CorporationsList_MouseDoubleClick">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" Header="Name"/>
+                            <DataGridTextColumn Binding="{Binding StockSymbol, Mode=OneWay}" Header="Symbol"/>
+                            <DataGridTextColumn Binding="{Binding StockPrice, Mode=OneWay}" Header="Price"/>
+                            <DataGridTextColumn Binding="{Binding SharesOwned, Mode=OneWay}" Header="Owned"/>
+                            <DataGridTextColumn Binding="{Binding TotalShares, Mode=OneWay}" Header="Total Shares"/>
+                            <DataGridTextColumn Binding="{Binding MarketCapString, Mode=OneWay}" Header="Market cap"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button x:Name="btnTrade" Width="80" Content="Trade" Background="WhiteSmoke" Click="btnTrade_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ContentControl>
+            </StackPanel>
+        </Border>
+
+        <!-- Section to hold the right-hand side of the window. -->
+        <Border Grid.Column="2" BorderBrush="DarkGray" BorderThickness="1" Margin="2,2,2,2" CornerRadius="4">
+            <Grid Margin="2,2,2,2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".3*" x:Name="TopRight" />
+                    <RowDefinition Height=".7*" x:Name="BottomRight" />
+                </Grid.RowDefinitions>
+
+                <StackPanel x:Name="TradingPanel" Grid.Row="0">
+                    <Label Content="Trade" FontWeight="Bold" FontSize="14"/>
+
+                    <DockPanel>
+                        <Label Content="Buy from:" Width="150"/>
+                        <ComboBox Name="cbBuyTypes" Width="150" HorizontalAlignment="Left" SelectionChanged="cbBuyTypes_SelectionChanged">
+                            <ComboBoxItem IsSelected="True" Content="Account"/>
+                            <ComboBoxItem IsSelected="False" Content="Corporation"/>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Label Content="Buyer account #:" Width="150"/>
+                        <TextBox x:Name="tbxBuyerAccount" Width="100" TextChanged="tbxBuyerAccount_TextChanged"/>
+                        <Label Foreground="IndianRed" Content="Invalid account number" Visibility="Hidden"/>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Label Content="Seller account #:" Width="150"/>
+                        <TextBox x:Name="tbxSellerAccount" Width="100" TextChanged="tbxSellerAccount_TextChanged" />
+                        <Label x:Name="lblAccountNumberError" Foreground="IndianRed" Content="Account numbers are invalid" Visibility="Hidden"/>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Label Content="Stock Symbol:" Width="150"/>
+                        <TextBox x:Name="tbxStockSymbol" TextChanged="tbxStockSymbol_TextChanged" Width="100" />
+                        <Label x:Name="lblStockSymbolError" Foreground="IndianRed" Content="Invalid stock symbol" Visibility="Hidden"/>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Label Content="Quantity:" Width="150"/>
+                        <TextBox x:Name="tbxQuantity" Width="100" TextChanged="tbxQuantity_TextChanged"/>
+                        <Label x:Name="lblQuantityError" Foreground="IndianRed" Content="Invalid quantity" Visibility="Hidden"/>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Label Content="Final price:" HorizontalAlignment="Left" Width="150"/>
+                        <Label x:Name="lblPrice" Width="100" FontWeight="Bold" />
+                        <!-- Invisible label to somehow fix a padding issue -->
+                        <Label Foreground="IndianRed" Content="Invalid quantity" Visibility="Hidden"/>
+                    </DockPanel>
+
+                    <DockPanel Width="500" HorizontalAlignment="Left">
+                        <Button x:Name="btnMakeTrade" Width="150" Content="Make Trade" HorizontalAlignment="Left" Click="btnMakeTrade_Click" Background="WhiteSmoke"/>
+                        <Button x:Name="btnCancelTrade" Width="150" HorizontalAlignment="Left" Content="Cancel" Click="btnCancelTrade_Click" Background="WhiteSmoke"/>
+                    </DockPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+                    <Label Content="Transactions" FontWeight="Bold" FontSize="14"/>
+
+                    <ContentControl Height="800">
+                        <ListView x:Name="TransactionLog" DataContext="{Binding}" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            VerticalAlignment="Stretch">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TransactionString}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ContentControl>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
